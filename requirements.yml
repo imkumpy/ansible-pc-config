@@ -1,0 +1,6 @@
+# Run command below to install roles/collections listed in this file
+# ansible-galaxy install -r requirements.yml
+
+roles:
+  # This role installs docker and docker-compose are installed on the machine
+  - geerlingguy.docker

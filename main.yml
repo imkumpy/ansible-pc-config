@@ -1,0 +1,8 @@
+---
+- hosts: dockerhost
+  become: yes
+
+  roles:
+    - geerlinguy.docker
+
+  #pre_tasks:
