@@ -18,10 +18,15 @@
     - name: Install packages
       apt:
         name:
+          # req for NAS connection
           - nfs-common
           - steam
           - atom
           - vim
+          # req for CAC authentication (DoD websites)
+          - opensc
+          - obs-studio
+          - zsh
           #- discord
           #- spotify-client
         state: present
