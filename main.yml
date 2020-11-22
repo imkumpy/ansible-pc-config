@@ -6,6 +6,17 @@
     - geerlingguy.docker
 
   pre_tasks:
+    
+    - name: Add GitHub CLI Apt-Key
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: C99B11DEB97541F0
+
+    - name: Add GitHub CLI Apt-Repository
+      apt_repository:
+        repo: deb-src https://cli.github.com/packages focal main
+        state: present
+    
     - name: Update apt cache if needed.
       apt: update_cache=yes cache_valid_time=3600
 
@@ -27,8 +38,9 @@
           - opensc
           - obs-studio
           - zsh
-          #- discord
+          - discord
           #- spotify-client
+          - gh
         state: present
 
     #- name: Install flatpaks
