@@ -6,17 +6,35 @@
     - geerlingguy.docker
 
   pre_tasks:
-    
-    - name: Add GitHub CLI Apt-Key
-      apt_key:
-        keyserver: keyserver.ubuntu.com
-        id: C99B11DEB97541F0
 
-    - name: Add GitHub CLI Apt-Repository
-      apt_repository:
-        repo: deb-src https://cli.github.com/packages focal main
+    #- name: Add GitHub CLI Apt-Key
+      #apt_key:
+        #keyserver: keyserver.ubuntu.com
+        #id: C99B11DEB97541F0
+
+    - name: Add Apt-Keys
+      apt_key:
+        keyserver: "{{ item.key }}"
+        id: "{{ item.value }}"
+      loop: "{{ tag_data | dict2items }}"
+      vars:
+        tag_data:
+          keyserver.ubuntu.com: C99B11DEB97541F0
+          # example.keyserver: key.id
+
+    - name: Add Apt-Keys from URL
+      apt_key:
+        url: https://download.spotify.com/debian/pubkey_0D811D58.gpg
         state: present
-    
+
+    - name: Add Apt-Repositories
+      apt_repository:
+        repo: "{{ item }}"
+        state: present
+      loop:
+        - deb-src https://cli.github.com/packages focal main
+        - deb http://repository.spotify.com stable non-free
+
     - name: Update apt cache if needed.
       apt: update_cache=yes cache_valid_time=3600
 
