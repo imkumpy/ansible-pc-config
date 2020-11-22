@@ -60,6 +60,8 @@
           #- spotify-client
           - gh
           - git
+          - python3-pip
+          - python3
         state: present
 
     #- name: Install flatpaks
@@ -77,3 +79,27 @@
         name: user.email
         value: "lebergarrett@gmail.com"
         scope: global
+
+    - name: check if awscli exists
+      stat:
+        path: /home/kump/Downloads/aws
+      register: awscli_dir
+
+    - name: Download awscli zip
+      get_url:
+        url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+        dest: /home/kump/Downloads/awscliv2.zip
+      when: awscli_dir.stat.exists == False
+
+    - name: Unzip awscli zip
+      unarchive:
+        src: /home/kump/Downloads/awscliv2.zip
+        dest: /home/kump/Downloads/
+        remote_src: yes
+        creates: /home/kump/Downloads/aws
+
+    - name: Run awscli install script
+      command: ./aws/install
+      args:
+        chdir: /home/kump/Downloads
+        creates: /usr/local/bin/aws
