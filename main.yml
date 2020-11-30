@@ -19,11 +19,13 @@
       loop: "{{ tag_data | dict2items }}"
       vars:
         tag_data:
+          # Github CLI
           keyserver.ubuntu.com: C99B11DEB97541F0
           # example.keyserver: key.id
 
     - name: Add Apt-Keys from URL
       apt_key:
+        # Spotify client
         url: https://download.spotify.com/debian/pubkey_0D811D58.gpg
         state: present
 
@@ -32,7 +34,9 @@
         repo: "{{ item }}"
         state: present
       loop:
+        # Github CLI
         - deb-src https://cli.github.com/packages focal main
+        # Spotify Client
         - deb http://repository.spotify.com stable non-free
 
     - name: Update apt cache if needed.
@@ -68,7 +72,7 @@
        #flatpak: name={{ item }} state=present
        #loop: [discord, spotify]
 
-    - name: Set up git name
+    - name: Set up git username
       community.general.git_config:
         name: user.name
         value: "imkumpy"
