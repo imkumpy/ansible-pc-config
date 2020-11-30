@@ -3,7 +3,7 @@
   become: yes
 
   roles:
-    - geerlingguy.docker
+    #- geerlingguy.docker
 
   pre_tasks:
 
@@ -86,7 +86,8 @@
 
     - name: check if awscli exists
       stat:
-        path: /home/kump/Downloads/aws
+        path: /usr/local/bin/aws
+        #path: /home/kump/Downloads/aws
       register: awscli_dir
 
     - name: Download awscli zip
@@ -100,10 +101,19 @@
         src: /home/kump/Downloads/awscliv2.zip
         dest: /home/kump/Downloads/
         remote_src: yes
-        creates: /home/kump/Downloads/aws
+        creates: /usr/local/bin/aws
+        #creates: /home/kump/Downloads/aws
 
     - name: Run awscli install script
       command: ./aws/install
       args:
         chdir: /home/kump/Downloads
         creates: /usr/local/bin/aws
+
+    - name: Mount /media/shared drive
+      mount:
+        path: /media/shared
+        src: 192.168.1.114:mnt/Shared/ShareDataSet
+        fstype: nfs
+        opts: defaults
+        state: present
