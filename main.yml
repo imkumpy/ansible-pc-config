@@ -84,7 +84,7 @@
         value: "lebergarrett@gmail.com"
         scope: global
 
-    - name: check if awscli exists
+    - name: Check if awscli exists
       stat:
         path: /usr/local/bin/aws
         #path: /home/kump/Downloads/aws
