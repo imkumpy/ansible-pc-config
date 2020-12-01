@@ -110,6 +110,23 @@
         chdir: /home/kump/Downloads
         creates: /usr/local/bin/aws
 
+    - name: Check if Oh My Zsh! exists
+      stat:
+        path: /home/kump/.oh-my-zsh
+      register: ohmyzsh_dir
+
+    - name: Download Oh My Zsh! install script
+      get_url:
+        url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        dest: /home/kump/Downloads/ohmyzsh-install.sh
+      when: ohmyzsh_dir.stat.exists == False
+
+    - name: Run Oh My Zsh! install script
+      command: ./ohmyzsh-install.sh
+      args:
+        chdir: /home/kump/Downloads
+        creates: /home/kump/.oh-my-zsh
+
     - name: Mount /media/shared drive
       mount:
         path: /media/shared
