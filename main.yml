@@ -145,3 +145,8 @@
         fstype: nfs
         opts: defaults
         state: present
+
+
+
+        #TODO
+        #Adjust downloads folder, awscli, and ohmyzsh installer permissions to match kump user instead of being root
