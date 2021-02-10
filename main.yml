@@ -53,19 +53,20 @@
         name:
           # req for NAS connection
           - nfs-common
-          - steam
-          - atom
+            #- steam
+            #- atom
           - vim
           # req for CAC authentication (DoD websites)
-          - opensc
-          - obs-studio
+          #- opensc
+          #- obs-studio
           - zsh
-          - discord
+            #- discord
           #- spotify-client
-          - gh
+          #- gh
           - git
           - python3-pip
           - python3
+          - unzip
         state: present
 
     #- name: Install flatpaks
@@ -83,6 +84,11 @@
         name: user.email
         value: "lebergarrett@gmail.com"
         scope: global
+
+    - name: Ensure downloads dir exists
+      file:
+        path: /home/kump/Downloads
+        state: directory
 
     - name: Check if awscli exists
       stat:
@@ -120,6 +126,11 @@
         url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         dest: /home/kump/Downloads/ohmyzsh-install.sh
       when: ohmyzsh_dir.stat.exists == False
+
+    - name: Make install script executable
+      file:
+        path: /home/kump/Downloads/ohmyzsh-install.sh
+        mode: 0744 
 
     - name: Run Oh My Zsh! install script
       command: ./ohmyzsh-install.sh
