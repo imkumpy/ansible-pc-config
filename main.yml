@@ -138,6 +138,11 @@
         chdir: /home/kump/Downloads
         creates: /home/kump/.oh-my-zsh
 
+    - name: Create mount pount for shared drive
+      file:
+        path: /media/shared
+        state: directory
+
     - name: Mount /media/shared drive
       mount:
         path: /media/shared
@@ -149,4 +154,4 @@
 
 
         #TODO
-        #Adjust downloads folder, awscli, and ohmyzsh installer permissions to match kump user instead of being root
+        #Adjust downloads folder, awscli, shared drive and ohmyzsh installer permissions to match kump user instead of being root
