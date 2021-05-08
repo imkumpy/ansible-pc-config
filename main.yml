@@ -5,7 +5,7 @@
     the_user: "{{ ansible_user_id }}"
 
   roles:
-    #- geerlingguy.docker
+    - { role: geerlingguy.docker, become: yes }
 
   pre_tasks:
 
@@ -139,6 +139,7 @@
       file:
         path: /media/shared
         state: directory
+      become: yes
 
     - name: Mount /media/shared drive
       mount:
@@ -149,12 +150,5 @@
         state: present
       become: yes
 
-<<<<<<< HEAD
         # TODO
         # Copy over config files using github repo
-=======
-
-
-        #TODO
-        #Adjust downloads folder, awscli, shared drive and ohmyzsh installer permissions to match kump user instead of being root
->>>>>>> 5b89345439024b34f875df8aa389246f95360770
