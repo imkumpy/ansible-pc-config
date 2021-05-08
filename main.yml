@@ -1,21 +1,19 @@
 ---
 - hosts: localhost
-  become: yes
+
+  vars:
+    the_user: "{{ ansible_user_id }}"
 
   roles:
     #- geerlingguy.docker
 
   pre_tasks:
 
-    #- name: Add GitHub CLI Apt-Key
-      #apt_key:
-        #keyserver: keyserver.ubuntu.com
-        #id: C99B11DEB97541F0
-
     - name: Add Apt-Keys
       apt_key:
         keyserver: "{{ item.key }}"
         id: "{{ item.value }}"
+      become: yes
       loop: "{{ tag_data | dict2items }}"
       vars:
         tag_data:
@@ -23,29 +21,29 @@
           keyserver.ubuntu.com: C99B11DEB97541F0
           # example.keyserver: key.id
 
-    - name: Add Apt-Keys from URL
-      apt_key:
-        # Spotify client
-        url: https://download.spotify.com/debian/pubkey_0D811D58.gpg
-        state: present
+    # - name: Add Apt-Keys from URL
+    #   apt_key:
+    #     # Spotify client
+    #     url: https://download.spotify.com/debian/pubkey_0D811D58.gpg
+    #     state: present
 
     - name: Add Apt-Repositories
       apt_repository:
         repo: "{{ item }}"
         state: present
+      become: yes
       loop:
         # Github CLI
-        - deb-src https://cli.github.com/packages focal main
-        # Spotify Client
-        - deb http://repository.spotify.com stable non-free
+        - deb https://cli.github.com/packages focal main
 
     - name: Update apt cache if needed.
       apt: update_cache=yes cache_valid_time=3600
+      become: yes
 
 
-  #handlers:
-  #  - name: restart apache
-  #    service: name=apache2 state=restarted
+  # handlers:
+  #   - name: restart apache
+  #     service: name=apache2 state=restarted
 
   tasks:
     - name: Install packages
@@ -53,25 +51,17 @@
         name:
           # req for NAS connection
           - nfs-common
-            #- steam
-            #- atom
+          # req for the 'add-apt-repository' command needed for ghcli repo if on desktop linux
+          # - software-properties-common
           - vim
-          # req for CAC authentication (DoD websites)
-          #- opensc
-          #- obs-studio
           - zsh
-            #- discord
-          #- spotify-client
-          #- gh
+          - gh
           - git
           - python3-pip
           - python3
           - unzip
         state: present
-
-    #- name: Install flatpaks
-       #flatpak: name={{ item }} state=present
-       #loop: [discord, spotify]
+      become: yes
 
     - name: Set up git username
       community.general.git_config:
@@ -87,56 +77,63 @@
 
     - name: Ensure downloads dir exists
       file:
-        path: /home/kump/Downloads
+        path: ~/Downloads
         state: directory
 
     - name: Check if awscli exists
       stat:
         path: /usr/local/bin/aws
-        #path: /home/kump/Downloads/aws
+        #path: ~/Downloads/aws
       register: awscli_dir
 
     - name: Download awscli zip
       get_url:
         url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
-        dest: /home/kump/Downloads/awscliv2.zip
+        dest: ~/Downloads/awscliv2.zip
       when: awscli_dir.stat.exists == False
 
     - name: Unzip awscli zip
       unarchive:
-        src: /home/kump/Downloads/awscliv2.zip
-        dest: /home/kump/Downloads/
+        src: ~/Downloads/awscliv2.zip
+        dest: ~/Downloads/
         remote_src: yes
         creates: /usr/local/bin/aws
-        #creates: /home/kump/Downloads/aws
+        #creates: ~/Downloads/aws
 
     - name: Run awscli install script
       command: ./aws/install
       args:
-        chdir: /home/kump/Downloads
+        chdir: /home/{{ the_user }}/Downloads
         creates: /usr/local/bin/aws
+      become: yes
 
     - name: Check if Oh My Zsh! exists
       stat:
-        path: /home/kump/.oh-my-zsh
+        path: ~/.oh-my-zsh
       register: ohmyzsh_dir
 
     - name: Download Oh My Zsh! install script
       get_url:
         url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-        dest: /home/kump/Downloads/ohmyzsh-install.sh
+        dest: ~/Downloads/ohmyzsh-install.sh
       when: ohmyzsh_dir.stat.exists == False
 
     - name: Make install script executable
       file:
-        path: /home/kump/Downloads/ohmyzsh-install.sh
+        path: ~/Downloads/ohmyzsh-install.sh
         mode: 0744 
 
     - name: Run Oh My Zsh! install script
       command: ./ohmyzsh-install.sh
       args:
-        chdir: /home/kump/Downloads
-        creates: /home/kump/.oh-my-zsh
+        chdir: ~/Downloads
+        creates: ~/.oh-my-zsh
+
+    - name: change user shell to zsh 
+      become: yes
+      user:
+        name: "{{ the_user }}"
+        shell: /bin/zsh
 
     - name: Mount /media/shared drive
       mount:
@@ -145,8 +142,7 @@
         fstype: nfs
         opts: defaults
         state: present
+      become: yes
 
-
-
-        #TODO
-        #Adjust downloads folder, awscli, and ohmyzsh installer permissions to match kump user instead of being root
+        # TODO
+        # Copy over config files using github repo
