@@ -135,6 +135,11 @@
         name: "{{ the_user }}"
         shell: /bin/zsh
 
+    - name: Create mount pount for shared drive
+      file:
+        path: /media/shared
+        state: directory
+
     - name: Mount /media/shared drive
       mount:
         path: /media/shared
@@ -144,5 +149,12 @@
         state: present
       become: yes
 
+<<<<<<< HEAD
         # TODO
         # Copy over config files using github repo
+=======
+
+
+        #TODO
+        #Adjust downloads folder, awscli, shared drive and ohmyzsh installer permissions to match kump user instead of being root
+>>>>>>> 5b89345439024b34f875df8aa389246f95360770
