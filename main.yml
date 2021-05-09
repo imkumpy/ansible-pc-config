@@ -150,5 +150,9 @@
         state: present
       become: yes
 
+    - name: Mount all drives
+      command: mount -a
+      become: yes
+
         # TODO
         # Copy over config files using github repo
