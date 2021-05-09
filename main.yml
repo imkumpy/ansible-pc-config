@@ -5,7 +5,12 @@
     the_user: "{{ ansible_user_id }}"
 
   roles:
-    - { role: geerlingguy.docker, become: yes }
+    - role: geerlingguy.docker
+      become: yes
+    - role: fubarhouse.golang
+      vars:
+        go_version: 1.16.4
+      become: yes
 
   pre_tasks:
 
