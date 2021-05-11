@@ -26,11 +26,13 @@
           keyserver.ubuntu.com: C99B11DEB97541F0
           # example.keyserver: key.id
 
-    # - name: Add Apt-Keys from URL
-    #   apt_key:
-    #     # Spotify client
-    #     url: https://download.spotify.com/debian/pubkey_0D811D58.gpg
-    #     state: present
+    - name: Add Apt-Keys from URL
+      apt_key:
+        # Terraform
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+      become: yes
+
 
     - name: Add Apt-Repositories
       apt_repository:
@@ -40,11 +42,12 @@
       loop:
         # Github CLI
         - deb https://cli.github.com/packages focal main
+        # Terraform
+        - deb [arch=amd64] https://apt.releases.hashicorp.com focal main
 
     - name: Update apt cache if needed.
       apt: update_cache=yes cache_valid_time=3600
       become: yes
-
 
   # handlers:
   #   - name: restart apache
@@ -57,7 +60,10 @@
           # req for NAS connection
           - nfs-common
           # req for the 'add-apt-repository' command needed for ghcli repo if on desktop linux
-          # - software-properties-common
+          - software-properties-common
+          # needed for terraform
+          - gnupg
+          - curl
           - vim
           - zsh
           - gh
@@ -65,6 +71,7 @@
           - python3-pip
           - python3
           - unzip
+          - terraform
         state: present
       become: yes
 
