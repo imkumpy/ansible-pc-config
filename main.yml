@@ -78,7 +78,7 @@
     - name: Set up git username
       community.general.git_config:
         name: user.name
-        value: "imkumpy"
+        value: "lebergarrett"
         scope: global
 
     - name: Set up git email
@@ -147,7 +147,7 @@
         name: "{{ the_user }}"
         shell: /bin/zsh
 
-    - name: Create mount pount for shared drive
+    - name: Create mount point for shared drive
       file:
         path: /media/shared
         state: directory
